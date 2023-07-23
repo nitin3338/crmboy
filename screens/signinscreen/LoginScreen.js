@@ -98,12 +98,15 @@ const LoginScreen = (props) => {
             <Text style={{ fontWeight: '600', fontSize: 16 }}>Or</Text>
             <View style={[{ height: 1, width: '40%', backgroundColor: '#c7c7c7' }]} />
           </View>
+          <View>
+          <Text style={{textAlign: 'center', marginTop: 20, fontWeight: 700, fontSize: 17}}>Sign In With</Text>
+          </View>
           <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
             <TouchableOpacity style={[styles.googleSocial]}>
-              <Text style={styles.btnText}>SignIn With <Ionicons name="logo-google" size={30} color='#fff' /></Text>
+              <Text><Ionicons name="logo-google" size={25} color='#fff' /></Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.linkedSocial]}>
-              <Text style={styles.btnText}>SignIn With <Ionicons name="logo-linkedin" size={30} color='#fff' /></Text>
+              <Text style={{color: '#fff', fontSize:16}}><Ionicons name="logo-linkedin" size={25} color='#fff' /></Text>
             </TouchableOpacity>
           </View>
         </View>

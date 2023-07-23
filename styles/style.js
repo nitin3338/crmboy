@@ -50,10 +50,14 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   paragraph: {
-    fontSize: 13,
+    fontSize: 16,
+    lineHeight:22,
     marginBottom: 8,
+    color: 'grey',
+    fontWeight: 'normal',
   },
   centered: {
+    flex: 1,
     textAlign: 'center',
     justifyContent: 'center',
     alignItems: 'center',
@@ -129,6 +133,45 @@ const styles = StyleSheet.create({
     paddingLeft: 50,
     paddingRight:50 
   },
+  // Buttons Styles
+  btn: {
+    padding:10,
+    textAlign: 'center',
+  },
+  btnPrimary: {
+    backgroundColor: '#5865ff',
+    color: '#fff',
+  },
+  btnSecondary: {
+    backgroundColor: '#000',
+    color: '#fff',
+  },
+  btnRound: {
+    borderRadius: 5,
+  },
+  btnCircle: {
+    borderRadius: 100,
+  },
+  btnSquare50: {
+    width: 50,
+    height: 50,
+    lineHeight: 30,
+    textAlign: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  btnSquare70:{
+    width: 70,
+    height: 70,
+    lineHeight: 35,
+    textAlign: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  btnRight:{
+    alignItems: 'flex-end',
+  },
+
   btn1:{
     paddingHorizontal:25,
     paddingVertical:15,
@@ -169,21 +212,21 @@ skipBtn:{
 },
 googleSocial: {
   backgroundColor: "#DD4D44",
-  width: "43%",
+  width: "47%",
   padding: 10,
   alignItems: "center",
-  margin: 5,
+  margin:0,
   borderRadius: 5,
-  marginTop: 35,
+  marginTop: 20,
 },
 linkedSocial: {
   backgroundColor: "#0A66C2",
-  width: "43%",
+  width: "47%",
   padding: 10,
   alignItems: "center",
-  margin: 5,
+  margin: 0,
   borderRadius: 5,
-  marginTop: 35,
+  marginTop: 20,
 },
 
 
