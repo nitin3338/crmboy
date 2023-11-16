@@ -35,7 +35,9 @@ const LoginScreen = (props) => {
       if (userData) {
         await AsyncStorage.setItem('UserData', JSON.stringify(userData));
         setUser(userData);
+        alert('Login successful');
         navigation.navigate('Afterlogin');
+        
       }
     } catch (error) {
       console.log(error);

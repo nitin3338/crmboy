@@ -1,5 +1,5 @@
 import axios from "axios";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 
 const ApiManager = axios.create({
     baseURL: 'https://apis.crmboy.com/api',
@@ -9,7 +9,9 @@ const ApiManager = axios.create({
 // Add a request interceptor
 ApiManager.interceptors.request.use(
   async (config) => {
-    const token = await AsyncStorage.getItem('userToken');
+    const token = await SecureStore.getItemAsync('userToken');
+    const UserData = await SecureStore.getItemAsync('user');
+   // console.log(UserData);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

@@ -28,7 +28,7 @@ const CustomInput = ({ control, name, rules = {}, placeholder, secureTextEntry }
           <TextInput
             value={value}
             onChangeText={onChange}
-            onBlur={handleBlur}
+            onBlur={onBlur}
             onFocus={handleFocus}
             placeholder={placeholder}
             style={styles.input}

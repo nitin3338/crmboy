@@ -1,10 +1,34 @@
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, StyleSheet, Text, Image, ImageBackground, TouchableOpacity, TextInput } from 'react-native';
 import Ionicons from "react-native-vector-icons/Ionicons";
+import * as SecureStore from 'expo-secure-store';
+import UserContext from "../contexts/UserContext";
+import useUserImage from "../components/useUserImage";
+import { color } from 'react-native-reanimated';
 
 const CustomDrawer = (props) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { user } = useContext(UserContext);
+  const userImage = useUserImage(); 
+  const [username, setUsername] = useState('');
+
+
+  
+  useState(() => {
+    if (user && user.user) {
+      setUsername(user.user.name);
+    } else {
+      setUsername('Guest');
+    }
+  }, [user]);
+
+  const handleLogOut =async()=>{
+    await SecureStore.deleteItemAsync('userToken');
+    await SecureStore.deleteItemAsync('user');
+    props.navigation.navigate('signin');
+  }
+
+
   return (
     <View style={{ flex: 1 }}>
       {/* Header */}
@@ -36,12 +60,32 @@ const CustomDrawer = (props) => {
 
     
       {/* Logout */}
-      <View style={{ padding: 20, borderTopWidth: 1, borderTopColor: '#999797' }}>
-        <TouchableOpacity onPress={() => props.navigation.navigate('signin')}>
-          <Text>Logout</Text>
-        </TouchableOpacity>
+      <View style={{ padding: 10, borderTopWidth: 2, borderTopColor: '#5865ff', flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{ marginRight: 10 }}>
+          {userImage ? (
+            <Image
+              source={{ uri: userImage }}
+              style={{ height: 30, width: 30, borderRadius: 15 }}
+            />
+          ) : (
+            <Image
+              source={require("../assets/userProfile.png")} // Default profile image
+              style={{ height: 30, width: 30, borderRadius: 15 }}
+            />
+          )}
+        </View>
+        <Text style={{ fontSize: 16,fontWeight:'700',color:'#333' }}>{username}</Text>
+        {user ? (
+          <TouchableOpacity onPress={handleLogOut} style={{ marginLeft: 'auto' }}>
+            <Text style={styles.btn1}>LOGOUT <Ionicons name='chevron-forward-outline' size={16} color={'#fff'}/> </Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={() => props.navigation.navigate('signin')} style={{ marginLeft: 'auto' }}>
+            <Text style={styles.btn2}>LOGIN <Ionicons name='chevron-forward-outline' size={16} color={'#fff'}/> </Text>
+          </TouchableOpacity>
+        )}
+        </View>  
       </View>
-    </View>
   );
 }
 
@@ -54,6 +98,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
   },
+  btn1:{
+    color:'red',
+    fontWeight:'700'
+  },
+  btn2:{
+    color:'green',
+    fontWeight:'700'
+  },
+
 })
 
 export default CustomDrawer;

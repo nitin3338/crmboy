@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { View, TouchableOpacity, Image, Text } from "react-native";
+import React, { useState, useEffect, useContext } from "react";
+import { View, TouchableOpacity, Image, Text , Platform} from "react-native";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
@@ -29,21 +28,45 @@ import PaymentMethod from "../../screens/PaymentMethod";
 import Tickets from "../../screens/Requests/Tickets";
 import Notification from "../../screens/Notification";
 import Settings from "../../screens/Settings";
-import axios from "axios";
-import { API_URL, NEXT_PUBLIC_API_KEY } from "@env";
+import UserContext from "../../contexts/UserContext";
+import useUserImage from "../../components/useUserImage";
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
 const logo = require("../../assets/images/crmboylogo.png");
 
-const handleBackPress = () => {
+// const handleBackPress = () => {
+//   const navigation = useNavigation();
+//   navigation.goBack();
+// };
+
+// Import necessary libraries and modules here if not already done in your code.
+const screenOptions = {
+  tabBarShowLabel:false,
+  headerShown:false,
+  tabBarStyle:{
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    left: 0,
+    elevation: 0,
+    height: 60,
+    background: "#fff"
+  }
+}
+
+const CustomHeader = (props) => {
+  const userImage = useUserImage(); 
   const navigation = useNavigation();
-  navigation.goBack();
-};
-const CustomHeader = () => {
-  const navigation = useNavigation();
-  
+  //console.log(userImage);
+
+  // console.log("User:", user);
+
+  const handleLogoPress = () => {
+    navigation.navigate("Home");
+  };
+
   return (
     <View
       style={{
@@ -52,72 +75,234 @@ const CustomHeader = () => {
         justifyContent: "space-between",
         padding: 10,
         backgroundColor: "#fff",
+        height: 60,
       }}
     >
       <View>
-        <TouchableOpacity onPress={handleBackPress}>
-          <Ionicons name="chevron-back-outline" size={35} color="#bfbfbf" />
+        <TouchableOpacity onPress={handleLogoPress}>
+          <Image
+            source={require("../../assets/images/crmboylogo.png")}
+            resizeMode="contain"
+            style={{ width: 120, height: 120 }}
+          />
         </TouchableOpacity>
       </View>
       <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
-        {/* {user.image ? (
+        {userImage ? (
           <Image
-            source={{ uri: user.image }} // Use the fetched image URL if available
-            style={{ height: 30, width: 30, borderRadius: 10 }}
+            source={{ uri: userImage }} // Display the fetched user image
+            style={{ height: 30, width: 30, borderRadius: 15 }}
           />
         ) : (
           <Image
-            source={require("../../assets/userProfile.png")} // Use the default image if the user has not uploaded one
-            style={{ height: 30, width: 30, borderRadius: 10 }}
+            source={require("../../assets/userProfile.png")} // Default profile image
+            style={{ height: 30, width: 30, borderRadius: 15 }}
           />
-        )} */}
-         <Image
-            source={require("../../assets/userProfile.png")} // Use the default image if the user has not uploaded one
-            style={{ height: 30, width: 30, borderRadius: 10 }}
-          />
+        )}
       </TouchableOpacity>
     </View>
   );
 };
+const TabNavigation = () => {
+  return (
+     
+       <Tab.Navigator screenOptions={screenOptions}>
+          <Tab.Screen 
+          name="Home" 
+          component={Home} 
+          options={{
+            tabBarIcon: ({focused})=>{
+              return (
+                <View style={{alignItems: "center", justifyContent: "center"}}> 
+                  <Ionicons name="home" size={24} color={focused ? "#5865ff": "#bfbfbf"} />
+                  
+            </View>
+              )
+            }
+          }}
+          />
+          <Tab.Screen 
+          name="orders" 
+          component={Orders} 
+          options={{
+            tabBarIcon: ({focused})=>{
+              return (
+                <View style={{alignItems: "center", justifyContent: "center"}}> 
+                 <Ionicons name="cube" size={24} color={focused ? "#5865ff": "#bfbfbf"} />
+                  
+            </View>
+              )
+            }
+          }}
+          />
+          <Tab.Screen 
+          name="Tickets" 
+          component={Tickets} 
+           options={{
+            tabBarIcon: ({focused})=>{
+              return (
+                <View
+                 style={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                 // backgroundColor: "#5865ff",
+                  // width: Platform.OS == "ios" ? 25 : 30,
+                  // height: Platform.OS == "ios" ? 25 : 30,
+                  top: Platform.OS == "ios" ? -15 : -30,
+                  //borderRadius: Platform.OS == "ios" ? 25 : 30
+                 }}
+                >
+                  <Ionicons name="add-circle" size={60} color="#5865ff" />
+                </View>
+              )
+            }
+           }}
+          />
+          <Tab.Screen
+           name="Notifications" 
+           component={Notification}
+           options={{
+            tabBarIcon: ({focused})=>{
+              return (
+                <View style={{alignItems: "center", justifyContent: "center"}}> 
+                 <Ionicons name="notifications" size={24} color={focused ? "#5865ff": "#bfbfbf"} />
+                  
+            </View>
+              )
+            }
+          }}
+           />
+          <Tab.Screen 
+          name="Settings" 
+          component={Settings} 
+          options={{
+            tabBarIcon: ({focused})=>{
+              return (
+                <View style={{alignItems: "center", justifyContent: "center"}}> 
+                 <Ionicons name="settings" size={24}  color={focused ? "#5865ff": "#bfbfbf"} />
+                  
+            </View>
+              )
+            }
+          }}
+          />
+         
+       </Tab.Navigator>
+)
+}
+
+
+const Afterlogin = (props) => {
+  const { user } = useContext(UserContext);
+  const navigation = useNavigation();
+
+  //console.log("User in Afterlogin:", user);
+
+  return (
+    <Drawer.Navigator
+      drawerContent={(props) => <CustomDrawer {...props} />}
+      screenOptions={{
+        header: () => <CustomHeader navigation={navigation} user={user} />,
+        drawerActiveBackgroundColor: "#e6eefa",
+        drawerActiveTintColor: "#000",
+        headerShown: true, // Ensure the header is shown
+      }}
+    >
+      <Drawer.Screen
+        name="TabScreen"
+        component={TabNavigation}
+        options={{
+          title: "Home",
+          drawerIcon: () => <Ionicons name="home-outline" size={22} />,
+        }}
+      />
+
+      <Drawer.Screen
+        name="Services"
+        component={Services}
+        options={{
+          drawerIcon: () => <Ionicons name="build-outline" size={22} />,
+        }}
+      />
+
+      <Drawer.Screen
+        name="Pricing"
+        component={Pricing}
+        options={{
+          drawerIcon: () => <Ionicons name="cash-outline" size={22} />,
+        }}
+      />
+      <Drawer.Screen
+        name="Contact"
+        component={Contact}
+        options={{
+          drawerIcon: () => <Ionicons name="call-outline" size={22} />,
+        }}
+      />
+      <Drawer.Screen
+        name="Dashboard"
+        component={Dashboard}
+        options={{
+          drawerIcon: () => <Ionicons name="grid-outline" size={22} />,
+        }}
+      />
+      <Drawer.Screen
+        name="Profile"
+        component={Profile}
+        options={{
+         
+          drawerIcon: () => <Ionicons name="person-circle-outline" size={22} />,
+        }}
+      />
+      <Drawer.Screen
+        name="Address"
+        component={Address}
+        options={{
+          drawerIcon: () => <Ionicons name="location-outline" size={22} />,
+        }}
+      />
+      <Drawer.Screen
+        name="Orders"
+        component={Orders}
+        options={{
+          drawerIcon: () => <Ionicons name="cube-outline" size={22} />,
+        }}
+      />
+      <Drawer.Screen
+        name="Subscription"
+        component={Subscription}
+        options={{
+          drawerIcon: () => <Ionicons name="cash-outline" size={22} />,
+        }}
+      />
+      <Drawer.Screen
+        name="PaymentMethod"
+        component={PaymentMethod}
+        options={{
+          drawerIcon: () => <Ionicons name="card-outline" size={22} />,
+        }}
+      />
+      <Drawer.Screen
+        name="Requests/Tickets"
+        component={Tickets}
+        options={{
+          drawerIcon: () => <Ionicons name="options-outline" size={22} />,
+        }}
+      />
+      
+    </Drawer.Navigator>
+  );
+};
+
+
 
 const AppNavigation = () => {
-  // const [userProfileImage, setUserProfileImage] = useState(null);
-  // const handleBackPress = () => {
-  //   const navigation = useNavigation();
-  //   navigation.goBack();
-  // };
-  // useEffect(() => {
-  //   fetchData(); // Fetch data when the component mounts
-  // }, []);
+  // ... existing code ...
 
-  // const fetchData = async () => {
-  //   try {
-  //     const baseURL = "https://apis.crmboy.com";
-  //     const response = await axios.get(`${API_URL}/login`);
-  //     // Assuming the API response contains the image URL, you can extract it and set it in the state
-  //     const imageURL = response.data.user.image;
-  //     if (imageURL) {
-  //       setUserProfileImage(imageURL); // Update the user profile image state with the fetched URL
-  //     }
-  //   } catch (error) {
-  //     console.log("Error fetching data:", error);
-  //   }
-  // };
-
-  <View
-    style={{
-      flexDirection: "row",
-      alignItems: "center",
-      paddingHorizontal: 10,
-    }}
-  >
-    <TouchableOpacity onPress={handleBackPress}>
-      <Ionicons name="arrow-back" size={24} color="white" />
-    </TouchableOpacity>
-  </View>;
   return (
     <NavigationContainer>
       <Stack.Navigator>
+        
         <Stack.Screen
           name="welcome"
           component={WelcomeScreen}
@@ -177,9 +362,15 @@ const AppNavigation = () => {
           component={ConfirmEmail}
           options={{ headerShown: false }}
         />
+
         <Stack.Screen
           name="Afterlogin"
           component={Afterlogin}
+          options={{ headerShown: false }}
+        />
+       <Stack.Screen
+          name="Bottom Tab"
+          component={TabNavigation}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
@@ -187,100 +378,8 @@ const AppNavigation = () => {
   );
 };
 
-const Afterlogin = (props) => {
-  
-  const navigation = useNavigation();
-  
 
-  return (
-    <Drawer.Navigator
-      drawerContent={(props) => <CustomDrawer {...props} />}
-      screenOptions={{
-        header: () => <CustomHeader navigation={navigation} />,
-        drawerActiveBackgroundColor: "#e6eefa",
-        drawerActiveTintColor: "#000",
-        headerShown: true, // Ensure the header is shown
-      }}
-    >
-      <Drawer.Screen
-        name="Home"
-        component={Home}
-        options={{
-          drawerIcon: () => <Ionicons name="home-outline" size={22} />,
-        }}
-      />
-      <Drawer.Screen
-        name="Services"
-        component={Services}
-        options={{
-          drawerIcon: () => <Ionicons name="build-outline" size={22} />,
-        }}
-      />
-      <Drawer.Screen
-        name="Pricing"
-        component={Pricing}
-        options={{
-          drawerIcon: () => <Ionicons name="cash-outline" size={22} />,
-        }}
-      />
-      <Drawer.Screen
-        name="Contact"
-        component={Contact}
-        options={{
-          drawerIcon: () => <Ionicons name="call-outline" size={22} />,
-        }}
-      />
-      <Drawer.Screen
-        name="Dashboard"
-        component={Dashboard}
-        options={{
-          drawerIcon: () => <Ionicons name="grid-outline" size={22} />,
-        }}
-      />
-      <Drawer.Screen
-        name="Profile"
-        component={Profile}
-        options={{
-          drawerIcon: () => <Ionicons name="person-circle-outline" size={22} />,
-        }}
-      />
-      <Drawer.Screen
-        name="Address"
-        component={Address}
-        options={{
-          drawerIcon: () => <Ionicons name="location-outline" size={22} />,
-        }}
-      />
-      <Drawer.Screen
-        name="Orders"
-        component={Orders}
-        options={{
-          drawerIcon: () => <Ionicons name="cube-outline" size={22} />,
-        }}
-      />
-      <Drawer.Screen
-        name="Subscription"
-        component={Subscription}
-        options={{
-          drawerIcon: () => <Ionicons name="cash-outline" size={22} />,
-        }}
-      />
-      <Drawer.Screen
-        name="PaymentMethod"
-        component={PaymentMethod}
-        options={{
-          drawerIcon: () => <Ionicons name="card-outline" size={22} />,
-        }}
-      />
-      <Drawer.Screen
-        name="Requests/Tickets"
-        component={Tickets}
-        options={{
-          drawerIcon: () => <Ionicons name="options-outline" size={22} />,
-        }}
-      />
-    </Drawer.Navigator>
-  );
-};
+
+
 
 export default AppNavigation;

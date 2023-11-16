@@ -34,20 +34,29 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 16,
+    fontFamily:'light'
   },
   headingMedium:{
     fontSize:27,
     fontWeight: 'bold',
+    fontFamily:'regular',
   },
   headingLarge: {
     fontSize: 32,
     fontWeight: 'bold',
     marginBottom: 16,
+    fontFamily:'medium'
   },
   headingBig: {
     fontSize: 42,
     fontWeight: 'bold',
     marginBottom: 16,
+    fontFamily:'medium'
+  },
+  headingSmall: {
+    fontSize:18,
+    fontWeight: 'bold',
+    fontFamily:'light'
   },
   paragraph: {
     fontSize: 16,
@@ -108,6 +117,9 @@ const styles = StyleSheet.create({
   },
   mb5:{
     marginBottom: 50,
+  },
+  mb6:{
+    marginBottom:60,
   },
   plr1:{
     paddingLeft: 10,
